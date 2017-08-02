@@ -7,22 +7,22 @@
     </button>
   </md-toolbar>
 
-  <md-card-content *ngIf="todoList.length">
+  <md-card-content>
     <md-list>
       <form>
-        <md-list-item *ngFor="let todo of todoList; let index=index" class="list-item">
+        <md-list-item *ngFor="let item of items | async" class="list-item">
 
-          <md-checkbox color="primary" type="checkbox" [name]="'item'+index" [(ngModel)]="todo.completed">
-            <span [class.completed]="todo.completed">{{todo.title}}</span>
+          <md-checkbox color="primary" type="checkbox" [name]="'item'+item.$key" [(ngModel)]="item.completed">
+            <span [class.completed]="item.completed">{{item.title}}</span>
           </md-checkbox>
-
+          <span class="fill-space"></span>
           <span>
-           <button md-mini-fab (click)="remove(index)" color="primary">
+           <button md-mini-fab (click)="remove(item.$key)" color="primary">
              <md-icon>delete_forever</md-icon>
            </button>
 
-           <button md-mini-fab (click)="todoDialog(todo)" color="primary"
-                   [disabled]="todo.completed">
+           <button md-mini-fab (click)="todoDialog(item.$key,item)" color="primary"
+                   [disabled]="item.completed">
              <md-icon>mode_edit</md-icon>
            </button>
          </span>
