@@ -12,16 +12,16 @@
       <form>
         <md-list-item *ngFor="let item of items | async" class="list-item">
 
-          <md-checkbox color="primary" type="checkbox" [name]="'item'+item.$key" [(ngModel)]="item.completed">
-            <span [class.completed]="item.completed">{{item.title}}</span>
+          <md-checkbox color="primary" type="checkbox" [name]="'item'+item.key" [(ngModel)]="item.completed">
+            <span [class.completed]="item.completed">{{ item.payload.val().text }}</span>
           </md-checkbox>
           <span class="fill-space"></span>
           <span>
-           <button md-mini-fab (click)="remove(item.$key)" color="primary">
+           <button md-mini-fab (click)="remove(item.key)" color="primary">
              <md-icon>delete_forever</md-icon>
            </button>
 
-           <button md-mini-fab (click)="todoDialog(item.$key,item)" color="primary"
+           <button md-mini-fab (click)="todoDialog(item.key,item)" color="primary"
                    [disabled]="item.completed">
              <md-icon>mode_edit</md-icon>
            </button>

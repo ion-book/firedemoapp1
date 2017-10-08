@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
+import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'app-root',
@@ -13,11 +14,12 @@ export class AppComponent implements OnInit{
   todoList: any = [];
   okButtonText = 'Crear Tarea';
 
-  items: FirebaseListObservable<any[]>;
+  itemsRef: AngularFireList<any>;
+  items: Observable<any[]>;
+
   constructor(db: AngularFireDatabase) {
-    this.items = db.list('/items');
-    console.log(this.items);
-    this.todoList = Object.assign({},this.items);
+    this.itemsRef = db.list('items');
+    this.items = this.itemsRef.snapshotChanges();
   }
 
   ngOnInit() {
@@ -29,14 +31,14 @@ export class AppComponent implements OnInit{
     this.editingTodo = todo;
     if (todo) {
       this.fieldValue = todo.title;
-      this.items.update(key, {title: todo.title, completed: todo.completed});
+      this.itemsRef.update(key, {title: todo.title, completed: todo.completed});
       this.okButtonText = 'Editar';
     }
     this.showDialog = true;
   }
 
   remove(key: string) {
-    this.items.remove(key); 
+    this.itemsRef.remove(key); 
   }
 
   editTodo(title) {
@@ -57,7 +59,7 @@ export class AppComponent implements OnInit{
 
   addTodo(title) {
     const todo = {title: title, completed: false};
-    this.items.push(todo);
+    this.itemsRef.push(todo);
   }
 
   hideDialog() {
