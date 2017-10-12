@@ -2,20 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireDatabase, AngularFireList } from 'angularfire2/database';
 import { Observable } from 'rxjs/Observable';
 
+export interface Todo {
+  id?: string;
+  completed: boolean;
+  title: string;
+}
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{ 
+  itemsRef: AngularFireList<any>;
+  items: Observable<any[]>;
+  
   showDialog = false;
   editingTodo: any = null;
   fieldValue = '';
-  todoList: any = [];
   okButtonText = 'Crear Tarea';
-
-  itemsRef: AngularFireList<any>;
-  items: Observable<any[]>;
+  
 
   constructor(db: AngularFireDatabase) {
     this.itemsRef = db.list('items');
@@ -25,13 +30,15 @@ export class AppComponent implements OnInit{
   ngOnInit() {
   }
 
-  todoDialog(key: string,todo = null) {
+  todoDialog(key: string = null,todo = null) {
     this.okButtonText = 'Crear Tarea';
     this.fieldValue = '';
-    this.editingTodo = todo;
-    if (todo) {
-      this.fieldValue = todo.title;
-      this.itemsRef.update(key, {title: todo.title, completed: todo.completed});
+    if (key) {
+      this.editingTodo = {id:"",title:"",completed:false};
+      this.editingTodo.id = key;
+      this.editingTodo.title= todo;
+      console.log("id:" + key + " todo: " + todo);
+      this.fieldValue = todo;
       this.okButtonText = 'Editar';
     }
     this.showDialog = true;
@@ -43,6 +50,7 @@ export class AppComponent implements OnInit{
 
   editTodo(title) {
     this.editingTodo.title = title;
+    this.itemsRef.update(this.editingTodo.id, {title: this.editingTodo.title, completed: false});
   }
 
   updateTodo(title) {
